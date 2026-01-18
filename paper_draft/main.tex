@@ -1,0 +1,50 @@
+\documentclass{article}
+
+\usepackage[main, final]{neurips_2025}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage{hyperref}
+\newcommand{\href}[2]{#2}
+\usepackage{url}
+% \usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+% \usepackage{nicefrac}
+% \usepackage{microtype}
+% \usepackage{xcolor}
+\providecommand{\textcolor}[2]{#2}
+\usepackage{graphicx}
+\usepackage{natbib}
+
+\title{A Leaderboard for AI Undetectability: Tracking the Arms Race Between Generation and Detection}
+
+\author{\% 
+  Hypogenic AI Team \\
+  Hypogenic AI \\
+  \texttt{research@hypogenic.ai} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\input{sections/abstract}
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\begin{ack}
+We thank the open-source community for providing the RAID benchmark and the detection models used in this study.
+\end{ack}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\newpage
+\appendix
+\input{sections/checklist}
+
+\end{document}

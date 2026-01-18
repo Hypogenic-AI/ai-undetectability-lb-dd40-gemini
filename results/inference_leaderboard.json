@@ -1,0 +1,16 @@
+[
+  {
+    "track": "inference",
+    "model": "human",
+    "samples": 50,
+    "avg_detector_score_ai_prob": 0.00190571196784731,
+    "undetectability_score": 0.9980942880321527
+  },
+  {
+    "track": "inference",
+    "model": "llama-chat",
+    "samples": 50,
+    "avg_detector_score_ai_prob": 0.4646650605410105,
+    "undetectability_score": 0.5353349394589895
+  }
+]

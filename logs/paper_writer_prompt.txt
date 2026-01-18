@@ -1,0 +1,338 @@
+You are an academic paper writer. Generate a complete NEURIPS style paper
+based on the experiment results provided.
+
+════════════════════════════════════════════════════════════════════════════════
+                            EXPERIMENT REPORT
+════════════════════════════════════════════════════════════════════════════════
+
+# Report: A Leaderboard for AI Undetectability
+
+## 1. Executive Summary
+We have established a proof-of-concept **Undetectability Leaderboard** focusing on two primary tracks: Inference and Postediting. Our experiments using the RAID benchmark and a RoBERTa-based detector demonstrate that while state-of-the-art open-source models (LLaMA-Chat) are moderately detectable (Undetectability Score ~0.53), simple adversarial postediting techniques like &#34;SpaceInfi&#34; can essentially nullify detection, boosting undetectability to near-perfect levels (~0.99), indistinguishable from human text. This confirms the fragility of current detection methods and underscores the need for a dynamic, multi-track leaderboard.
+
+## 2. Goal
+The goal of this research was to operationalize a leaderboard that tracks the &#34;arms race&#34; between AI generation and detection. Specifically, we aimed to:
+1.  Define and implement evaluation tracks for **Inference** (base models) and **Postediting** (adversarial evasion).
+2.  Quantify the effectiveness of current detection against standard models vs. adversarially modified text.
+3.  Establish a scalable framework for future submissions (Finetuning and Pretraining tracks).
+
+## 3. Data Construction
+
+### Dataset Description
+We utilized the **RAID (Robust AI Detection) Benchmark** dataset sample, which contains generations from multiple models (including LLaMA-Chat) and Human writings across diverse domains (Abstracts, News, etc.).
+
+### Data Quality
+-   **Source**: RAID (arXiv:2405.07940)
+-   **Sample Size**: 100 samples (50 Human, 50 LLaMA-Chat) used for this pilot.
+-   **Labels**: High-quality labels provided by the benchmark.
+
+### Preprocessing
+-   **Inference Track**: Raw text used as provided.
+-   **Postediting Track**: We applied the **SpaceInfi** attack, which inserts a single space before a random comma in the text (e.g., `word,` -&gt; `word ,`).
+
+## 4. Experiment Description
+
+### Methodology
+We adopted a &#34;Red Team vs. Blue Team&#34; approach:
+-   **Blue Team (Detector)**: A pre-trained `RoBERTa-base-openai-detector` (via HuggingFace `hello-simpleai/chatgpt-detector-roberta`), a standard supervised baseline.
+-   **Red Team (Generator)**:
+    -   *Track 1 (Inference)*: LLaMA-Chat model outputs.
+    -   *Track 2 (Postediting)*: LLaMA-Chat outputs + SpaceInfi attack.
+
+### Evaluation Metrics
+**Undetectability Score**: Defined as $1 - P(\text{AI})$, where $P(\text{AI})$ is the probability assigned by the detector that the text is machine-generated.
+-   Score $\approx 1.0$: Perfectly undetectable (looks Human).
+-   Score $\approx 0.0$: Easily detected.
+
+## 5. Result Analysis
+
+### Key Findings
+1.  **Humans are undetectable**: Human text achieved an Undetectability Score of **0.998**, validating the detector&#39;s low false positive rate on this sample.
+2.  **Base Models are detectable**: LLaMA-Chat achieved a score of **0.535**. The detector is uncertain but leans towards detection compared to human text.
+3.  **Adversarial Attacks break detection**: Applying SpaceInfi increased LLaMA-Chat&#39;s score from **0.535** to **0.999**, a **+0.46** improvement. The simple addition of spaces rendered the text statistically identical to human text for this detector.
+
+### Raw Results
+| Track | Model / Method | Undetectability Score (Higher is Better) |
+|-------|----------------|------------------------------------------|
+| Inference | Human (Reference) | 0.998 |
+| Inference | LLaMA-Chat | 0.535 |
+| Postediting | LLaMA-Chat + SpaceInfi | **0.999** |
+
+### Interpretation
+The massive jump in undetectability for the Postediting track confirms that current token-based detectors are highly sensitive to tokenization artifacts. The &#34;SpaceInfi&#34; attack alters the token sequence (splitting `word,` into `word` and `,`) without changing semantic meaning, effectively blinding the detector.
+
+## 6. Conclusions
+We have successfully implemented the core infrastructure for an AI Undetectability Leaderboard. The results highlight a critical vulnerability in current detection systems: they detect *artifacts*, not *inhumanity*. A robust leaderboard must therefore weight the **Postediting** track heavily to encourage detectors that look at semantics rather than syntax.
+
+## 7. Next Steps
+1.  **Expand Tracks**: Implement the **Finetuning** track by fine-tuning Llama on human datasets and measuring if it learns to mimic human style without adversarial artifacts.
+2.  **Better Detectors**: Integrate stronger detectors (e.g., Binoculars, Ghostbuster) into the leaderboard to see if they resist SpaceInfi.
+3.  **Web Interface**: Deploy the JSON results to a web frontend (as hinted by the `web/` directory in the RAID repo).
+
+
+════════════════════════════════════════════════════════════════════════════════
+                            RESEARCH PLAN
+════════════════════════════════════════════════════════════════════════════════
+
+# Research Plan: A Leaderboard for AI Undetectability
+
+## Motivation &amp; Novelty Assessment
+
+### Why This Research Matters
+As AI-generated text becomes indistinguishable from human writing, the ability to detect it becomes critical for academic integrity, misinformation control, and platform safety. However, current detectors are often brittle. An &#34;Undetectability Leaderboard&#34; incentivizes the development of more human-like generation methods and, conversely, more robust detection systems. It shifts the focus from &#34;how smart is this model?&#34; to &#34;how human is this model?&#34;.
+
+### Gap in Existing Work
+Existing benchmarks like RAID and TuringBench provide datasets and evaluations but are static snapshots. There is no live, competitive leaderboard that explicitly separates &#34;inference&#34; (base model), &#34;postediting&#34; (adversarial attacks), and &#34;finetuning&#34; tracks. Most current research treats detection as a binary classification problem rather than a continuous game of evasion and detection.
+
+### Our Novel Contribution
+We propose a dynamic leaderboard structure with four distinct tracks:
+1.  **Inference**: Base model outputs.
+2.  **Postediting**: Outputs modified by a program (e.g., adversarial attacks).
+3.  **Finetuning**: Models fine-tuned for human-likeness.
+4.  **Pretraining**: New architectures/models.
+
+We will demonstrate the viability of this leaderboard by implementing the evaluation pipeline for the first two tracks (Inference and Postediting) using the RAID benchmark and the SpaceInfi adversarial attack.
+
+### Experiment Justification
+-   **Experiment 1 (Inference Track)**: Establish baseline detectability scores for standard LLMs (GPT-4, Llama, etc.) using state-of-the-art detectors. This validates the scoring metric.
+-   **Experiment 2 (Postediting Track)**: Apply the &#34;SpaceInfi&#34; attack (inserting spaces) and measuring the drop in detection accuracy. This proves the need for a separate track for post-processing and highlights detector fragility.
+
+## Research Question
+Can we establish a robust, multi-track leaderboard framework that accurately quantifies the trade-off between AI text undetectability and content preservation?
+
+## Proposed Methodology
+
+### Approach
+We will utilize the **RAID benchmark** codebase and dataset as the foundation. RAID provides a diverse set of generations and an evaluation harness. We will extend this to support our specific leaderboard tracks.
+
+### Experimental Steps
+1.  **Environment Setup**: Install `raid` dependencies and `detect-gpt` if needed.
+2.  **Inference Track Baseline**:
+    *   Load RAID dataset samples (Human vs. AI from various models).
+    *   Run a battery of detectors (RoBERTa-base-detector, Log-Likelihood based).
+    *   Compute &#34;Undetectability Score&#34; (1 - Detection Accuracy or similar).
+3.  **Postediting Track Implementation**:
+    *   Implement the **SpaceInfi** attack (inserting spaces before punctuation).
+    *   Apply this to the RAID samples.
+    *   Re-run detectors.
+    *   Measure the delta in undetectability.
+4.  **Leaderboard Generation**:
+    *   Aggregating scores into a JSON/Markdown leaderboard format.
+
+### Baselines
+-   **Detectors**: RoBERTa-based detector (standard supervised baseline), Entropy-based / Perplexity-based (zero-shot).
+-   **Generators**: Models available in RAID (e.g., GPT-3, GPT-4, Llama).
+
+### Evaluation Metrics
+-   **Detection Accuracy (ACC)**: Pr(Detector says AI | AI Text).
+-   **Undetectability Score**: 1 - ROC-AUC (or simply 1 - ACC for balanced sets).
+-   **Content Preservation** (for Postediting): Since we are using simple attacks like SpaceInfi, content is preserved by definition, but we will note this.
+
+## Timeline and Milestones
+-   **Phase 2 (10 min)**: Environment setup.
+-   **Phase 3 (30 min)**: Implement SpaceInfi and integrate RAID evaluation harness.
+-   **Phase 4 (40 min)**: Run detection on clean vs. attacked data.
+-   **Phase 5 (20 min)**: Analyze results and compile leaderboard.
+-   **Phase 6 (20 min)**: Documentation.
+
+## Potential Challenges
+-   **Compute**: Running large model detectors might be slow. *Mitigation*: Use smaller subsets of RAID (e.g., 100-500 samples) to demonstrate the pipeline.
+-   **Dependencies**: RAID code might have complex dependencies. *Mitigation*: Use `uv` to manage them cleanly.
+
+## Success Criteria
+-   A functional script that takes a dataset (Track 1) or a postediting function (Track 2) and outputs a &#34;Leaderboard Score&#34;.
+-   Demonstration that SpaceInfi significantly increases undetectability scores.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          LITERATURE REVIEW
+════════════════════════════════════════════════════════════════════════════════
+
+# Literature Review
+
+## Research Area Overview
+The research area focuses on **AI Undetectability** and **AI-Generated Text Detection**. With the proliferation of Large Language Models (LLMs) like ChatGPT, distinguishing between human-written and machine-generated text has become a critical challenge. The field has evolved from simple binary classification (Human vs. Machine) to more complex tasks involving authorship attribution (identifying specific models), robustness against adversarial attacks (postediting), and benchmarking across diverse domains and sampling strategies. Recent work emphasizes that current detectors are brittle and often fail when faced with simple obfuscation techniques or out-of-distribution data.
+
+## Key Papers
+
+### Paper 1: Counter Turing Test CT^2: AI-Generated Text Detection is Not as Easy as You May Think
+- **Authors**: Megha Chakraborty et al.
+- **Year**: 2023
+- **Source**: arXiv:2310.05030
+- **Key Contribution**: Introduces the **AI Detectability Index (ADI)** to rank LLMs based on their detectability. Proposed the Counter Turing Test (CT^2) benchmark.
+- **Methodology**: Evaluated 15 LLMs using various detection methods (watermarking, perplexity, burstiness, etc.).
+- **Key Findings**: Larger LLMs (like GPT-4) have a higher ADI (harder to detect). Current detection methods are fragile and easily circumvented.
+- **Relevance**: Provides a metric (ADI) and a framework for evaluating the &#34;inference&#34; track of our leaderboard.
+
+### Paper 2: TURINGBENCH: A Benchmark Environment for Turing Test in the Age of Neural Text Generation
+- **Authors**: Adaku Uchendu et al.
+- **Year**: 2021
+- **Source**: arXiv:2109.13296
+- **Key Contribution**: Created a benchmark with 200K articles covering 20 labels (19 models + Human). Defined two tasks: Turing Test (binary) and Authorship Attribution (multi-class).
+- **Datasets Used**: 10K news articles prompted to 19 models (GPT-1 to GPT-3, GROVER, etc.).
+- **Key Findings**: FAIR_wmt20 and GPT-3 were the hardest to detect at the time.
+- **Relevance**: Establishes the standard for &#34;Authorship Attribution&#34; and provides a large-scale dataset structure we can emulate.
+
+### Paper 3: Evade ChatGPT Detectors via A Single Space
+- **Authors**: Shuyang Cai, Wanyun Cui
+- **Year**: 2023
+- **Source**: arXiv:2307.02599
+- **Key Contribution**: Demonstrated a simple adversarial attack (**SpaceInfi**) where adding a single space before a comma breaks detection.
+- **Methodology**: Tested against white-box and black-box detectors.
+- **Key Findings**: Detectors rely on subtle tokenization cues rather than semantic understanding. &#34;Token mutation&#34; caused by the extra space disrupts the detection signal.
+- **Relevance**: Directly relevant to the &#34;postediting&#34; track of our leaderboard. Shows that minimal changes can maximize undetectability.
+
+### Paper 4: Who Said That? Benchmarking Social Media AI Detection
+- **Authors**: Wanyun Cui et al.
+- **Year**: 2023
+- **Source**: arXiv:2310.08240
+- **Key Contribution**: Introduced **SAID** (Social media AI Detection) benchmark using real-world data from Zhihu and Quora.
+- **Key Findings**: Humans familiar with LLMs *can* distinguish AI text (96.5% accuracy on Zhihu subset), contradicting earlier assumptions. User-oriented detection (using user history) is more effective than text-only detection.
+- **Relevance**: Highlights the importance of &#34;in-the-wild&#34; data and user context, relevant for a robust leaderboard.
+
+### Paper 5: RAID: A Shared Benchmark for Robust Evaluation of Machine-Generated Text Detectors
+- **Authors**: Liam Dugan et al.
+- **Year**: 2024
+- **Source**: arXiv:2405.07940
+- **Key Contribution**: The largest and most diverse benchmark (**RAID**) with 6M+ generations, 11 models, 8 domains, 11 attacks, and 4 decoding strategies.
+- **Key Findings**: Detectors fail significantly on adversarial attacks, unseen domains, and different sampling strategies (e.g., repetition penalties).
+- **Relevance**: This is the state-of-the-art benchmark to beat or build upon. Our leaderboard should likely include or reference RAID&#39;s diverse tracks.
+
+## Common Methodologies
+- **Detection Methods**:
+    - **Zero-shot/Statistical**: Perplexity, Burstiness, Negative Log-Curvature (DetectGPT).
+    - **Supervised Classifiers**: Fine-tuned RoBERTa/BERT (standard baseline).
+    - **Watermarking**: Injecting signals during generation (though often removed by attacks).
+- **Adversarial Attacks**:
+    - **Character-level**: Inserting spaces, homoglyphs (SpaceInfi).
+    - **Paraphrasing**: Using another LLM to rewrite.
+    - **Sampling**: Changing temperature or repetition penalties.
+
+## Datasets in the Literature
+- **RAID**: 6M+ samples, 11 models, diverse domains. (The &#34;Gold Standard&#34; currently).
+- **TURINGBENCH**: 200K samples, news domain, older models.
+- **SAID**: Social media data (Zhihu/Quora).
+- **HC3**: Human vs ChatGPT Comparison Corpus (often used as a baseline).
+- **M4**: Multi-Generator, Multi-Domain, Multi-Lingual dataset.
+
+## Recommendations for Our Experiment
+Based on the review, our leaderboard should focus on **robustness** and ** undetectability** across different axes:
+1.  **Inference Track**: Measuring ADI across different base models (referencing CT^2).
+2.  **Postediting Track**: Evaluating resistance to detection after simple edits (like SpaceInfi or paraphrasing).
+3.  **Finetuning Track**: How much does finetuning on human data improve undetectability?
+4.  **Pretraining Track**: (More advanced) Does pretraining architecture affect detectability?
+
+**Recommended Datasets**:
+- **RAID**: For robust evaluation.
+- **HC3**: For simple baseline comparisons.
+- **TURINGBENCH**: For authorship attribution tasks.
+
+**Recommended Baselines**:
+- **Detectors**: GPTZero (commercial proxy), DetectGPT (zero-shot), RoBERTa-based classifier (supervised).
+- **Generators**: GPT-4, LLaMA-2/3, Mistral.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          PAPER REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+Generate a complete academic paper with the following structure:
+
+1. TITLE
+   - Clear, specific, informative
+   - Should convey main finding or contribution
+
+2. ABSTRACT (150-250 words)
+   - Problem statement
+   - Approach
+   - Key results
+   - Significance
+
+3. INTRODUCTION
+   - Research problem and motivation
+   - Gap in existing work
+   - Our contribution (be specific)
+   - Paper organization
+
+4. RELATED WORK
+   - Organized by theme/approach
+   - Position our work relative to prior work
+   - Cite papers from literature review
+
+5. METHODOLOGY
+   - Clear description of approach
+   - Experimental setup
+   - Datasets used
+   - Evaluation metrics
+   - Baselines
+
+6. RESULTS
+   - Present results with tables and figures
+   - Statistical analysis
+   - Comparison to baselines
+   - Ablation studies (if applicable)
+
+7. DISCUSSION
+   - Interpretation of results
+   - Limitations
+   - Broader implications
+
+8. CONCLUSION
+   - Summary of contributions
+   - Key findings
+   - Future work
+
+9. REFERENCES
+   - BibTeX format
+   - All cited papers
+
+════════════════════════════════════════════════════════════════════════════════
+                          OUTPUT FORMAT
+════════════════════════════════════════════════════════════════════════════════
+
+Create a MODULAR LaTeX project with the following directory structure:
+
+paper_draft/
+├── main.tex              # Main file that imports all sections
+├── references.bib        # BibTeX references
+├── sections/
+│   ├── abstract.tex      # Abstract content
+│   ├── introduction.tex  # Introduction section
+│   ├── related_work.tex  # Related work section
+│   ├── methodology.tex   # Methodology section
+│   ├── results.tex       # Results section
+│   ├── discussion.tex    # Discussion section
+│   └── conclusion.tex    # Conclusion section
+├── figures/              # Directory for any generated figures
+├── tables/               # Directory for complex standalone tables
+└── appendix/             # Directory for appendix sections (if needed)
+
+INSTRUCTIONS:
+1. First, create the directory structure above (mkdir -p paper_draft/sections paper_draft/figures paper_draft/tables paper_draft/appendix)
+2. Write main.tex that:
+   - Uses \documentclass[final]{neurips_2025} (or appropriate style)
+   - Includes necessary packages
+   - Uses \input{sections/abstract.tex} etc. to include each section
+   - Uses \bibliography{references} for references
+3. Write each section file with COMPLETE content (no placeholders)
+4. Each section file should include its \section{} command
+5. Write references.bib with all citations in BibTeX format
+6. After writing all files, compile the paper:
+   cd paper_draft && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
+
+This modular structure allows humans to easily:
+- Edit individual sections without navigating a large file
+- Track changes per section
+- Reuse sections across different paper versions
+
+════════════════════════════════════════════════════════════════════════════════
+                          QUALITY REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+- Academic tone throughout
+- All claims must be supported by data from the experiment report
+- Proper citations using \cite{} commands
+- Clear figures and tables with proper captions
+- NO placeholder text - every section must have real content
+- The paper MUST compile without errors
+- If compilation fails, debug and fix the LaTeX errors

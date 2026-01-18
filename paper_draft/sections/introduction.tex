@@ -1,0 +1,14 @@
+\section{Introduction}
+
+The proliferation of Large Language Models (LLMs) has led to a paradigm shift in natural language generation, where models can now produce text that is often indistinguishable from human writing. This capability, while transformative, poses significant risks regarding misinformation, academic integrity, and platform manipulation. Consequently, the ability to reliably detect machine-generated text has become a paramount safety requirement.
+
+Current research in AI detection is characterized by a rapidly evolving landscape of generation techniques and detection methods. However, existing evaluation frameworks often provide only static snapshots of model performance. Benchmarks such as RAID \cite{dugan2024raid} and TuringBench \cite{uchendu2021turingbench} offer valuable datasets but do not capture the continuous adaptation inherent in the adversarial relationship between generators and detectors. Furthermore, most evaluations treat detection as a binary classification task on raw model outputs, neglecting the practical reality that adversaries can easily modify text to evade detection.
+
+To address these limitations, we propose the \textbf{Undetectability Leaderboard}, a novel framework designed to track the progress of AI undetectability across multiple dimensions. Unlike traditional benchmarks, our leaderboard explicitly separates evaluation into tracks: \textit{Inference}, for base model outputs; and \textit{Postediting}, for text modified by adversarial techniques.
+
+Our contributions are as follows:
+\begin{itemize}
+    \item We operationalize a multi-track leaderboard framework distinguishing between intrinsic model detectability and robustness against adversarial postediting.
+    \item We quantify the fragility of current state-of-the-art detectors (e.g., RoBERTa-based models) against simple attacks, showing that the \textit{SpaceInfi} attack \cite{cai2023evade} increases undetectability from 0.535 to 0.999.
+    \item We provide a reproducible methodology for evaluating the trade-off between undetectability and content preservation, establishing a baseline for future research in robust AI detection.
+\end{itemize}

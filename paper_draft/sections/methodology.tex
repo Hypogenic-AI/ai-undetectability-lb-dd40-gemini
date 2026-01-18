@@ -1,0 +1,27 @@
+\section{Methodology}
+
+We adopt a ``Red Team vs. Blue Team'' evaluation paradigm to simulate the adversarial nature of AI detection.
+
+\subsection{Dataset and Tracks}
+We utilize the RAID benchmark dataset \cite{dugan2024raid} as our primary source of text generations. For this study, we sample 100 instances equally split between Human writings and LLaMA-Chat generations across diverse domains (Abstracts, News, etc.).
+
+We define two evaluation tracks:
+\begin{enumerate}
+    \item \textbf{Inference Track}: Evaluates the raw output of the generative model. This track measures the intrinsic artifacts left by the model's decoding strategy and training data.
+    \item \textbf{Postediting Track}: Evaluates the robustness of detection against adversarial modifications. We implement the \textit{SpaceInfi} attack \cite{cai2023evade}, which programmatically inserts a space before random commas in the text (e.g., converting ``word,'' to ``word ,'').
+\end{enumerate}
+
+\subsection{Detection Model (Blue Team)}
+For the detector, we employ a pre-trained RoBERTa-base model fine-tuned for ChatGPT detection (specifically, the `hello-simpleai/chatgpt-detector-roberta` checkpoint). This model represents a standard, widely-used supervised baseline in the field.
+
+\subsection{Evaluation Metrics}
+We define the \textbf{Undetectability Score} for a set of generations $X$ as:
+\begin{equation}
+    \text{Score}(X) = 1 - \frac{1}{|X|} \sum_{x \in X} P(\text{AI} \mid x)
+\end{equation}
+where $P(\text{AI} \mid x)$ is the probability assigned by the detector that sample $x$ is machine-generated.
+\begin{itemize}
+    \item A score of $\approx 1.0$ indicates perfect undetectability (indistinguishable from human text).
+    \item A score of $\approx 0.0$ indicates that the text is easily identified as AI-generated.
+\end{itemize}
+We also report the raw accuracy of the detector on the balanced dataset.

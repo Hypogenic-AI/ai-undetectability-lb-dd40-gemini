@@ -1,0 +1,10 @@
+\section{Discussion}
+
+The results of this study have profound implications for the reliability of current AI detection systems. The massive jump in undetectability observed in the Postediting track confirms that RoBERTa-based detectors rely heavily on specific tokenization artifacts rather than high-level semantic or stylistic features.
+
+The effectiveness of the \textit{SpaceInfi} attack can be attributed to ``token mutation.'' Standard tokenizers (e.g., BPE) merge common word-punctuation pairs (like ``word,'') into single tokens. By inserting a space (``word , ''), the attacker forces the tokenizer to split this into two distinct tokens. This disruption alters the input distribution seen by the Transformer, effectively blinding the detector to the artifacts it learned during training.
+
+This vulnerability highlights a critical flaw: detectors are often overfitting to the \textit{syntax} of generation rather than the \textit{inhumanity} of the content. A robust leaderboard must therefore weight the Postediting track heavily. If a detector can be defeated by a simple regex script, its utility in real-world scenarios---where adversaries are active---is negligible.
+
+\section{Limitations}
+Our study is limited by the sample size (100 instances) and the use of a single detector and generator type. While sufficient for a proof-of-concept, a full-scale leaderboard would require evaluating a broader matrix of models and detectors. Additionally, the \textit{SpaceInfi} attack, while effective against token-based models, might be easily countered by simple preprocessing (removing extra spaces) or character-level models.

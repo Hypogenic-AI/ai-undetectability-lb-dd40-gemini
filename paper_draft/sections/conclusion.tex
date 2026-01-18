@@ -1,0 +1,14 @@
+\section{Conclusion}
+
+We have successfully established the core infrastructure for an AI Undetectability Leaderboard, demonstrating the necessity of evaluating detection systems against both raw inference and adversarial postediting. Our experiments show that while base models like LLaMA-Chat leave detectable footprints, these can be effortlessly masked by simple attacks like \textit{SpaceInfi}, boosting undetectability to near-human levels (0.999).
+
+These findings underscore that the ``arms race'' is currently tilted in favor of generation. To restore balance, future research must move beyond simple supervised classification of raw text.
+
+\subsection{Future Work}
+We plan to expand the leaderboard with the following initiatives:
+\begin{enumerate}
+    \item \textbf{Finetuning Track}: Implementing a track where models are fine-tuned on human datasets to measure if they can learn to mimic human style intrinsically, without post-hoc attacks.
+    \item \textbf{Robust Detectors}: integrating and evaluating more advanced detection methods, such as those based on intrinsic dimension or burstiness, to see if they offer greater resistance to token-level perturbations.
+    \item \textbf{Web Deployment}: We intend to deploy the leaderboard results to a public web interface to provide real-time tracking of the state of the art.
+\end{enumerate}
+

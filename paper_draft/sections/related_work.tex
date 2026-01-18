@@ -1,0 +1,10 @@
+\section{Related Work}
+
+\textbf{Benchmarks for AI Detection.}
+Several benchmarks have been proposed to evaluate the performance of AI detectors. TuringBench \cite{uchendu2021turingbench} introduced a large-scale dataset for the Turing Test and authorship attribution, covering 19 distinct models. More recently, RAID \cite{dugan2024raid} established a comprehensive benchmark with over 6 million generations across varied domains, models, and attack strategies. Our work builds upon the data and evaluation protocols of RAID but focuses on a dynamic leaderboard structure rather than a static dataset analysis. Similarly, the Counter Turing Test (CT$^2$) \cite{chakraborty2023counter} proposed the AI Detectability Index (ADI) to rank models, a metric we adapt for our Inference track.
+
+\textbf{Detection Methods.}
+Detection approaches generally fall into two categories: zero-shot statistical methods and supervised classifiers. Statistical methods, such as DetectGPT \cite{mitchell2023detectgpt}, rely on the observation that machine-generated text occupies negative log-curvature regions of the model's likelihood function. Supervised methods, typically utilizing fine-tuned Transformers like RoBERTa \cite{liu2019roberta}, currently achieve state-of-the-art performance on in-distribution data but often struggle with generalization \cite{guo2023hc3}.
+
+\textbf{Adversarial Attacks.}
+The robustness of detectors is a major concern. \cite{cai2023evade} demonstrated the \textit{SpaceInfi} attack, where inserting a single space before punctuation breaks token-based detectors without altering human-perceived meaning. This simple ``token mutation'' highlights the reliance of current detectors on superficial artifacts. Other works have explored paraphrasing and homoglyph attacks \cite{dugan2024raid}, further motivating the need for our dedicated Postediting track.

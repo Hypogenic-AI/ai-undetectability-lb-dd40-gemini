@@ -1,0 +1,10 @@
+{
+  "track": "postediting",
+  "attack": "SpaceInfi",
+  "samples": 50,
+  "baseline_detection_score": 0.4646650605410105,
+  "baseline_undetectability": 0.5353349394589895,
+  "attacked_detection_score": 0.0006442736875033006,
+  "attacked_undetectability": 0.9993557263124967,
+  "improvement": 0.4640207868535072
+}

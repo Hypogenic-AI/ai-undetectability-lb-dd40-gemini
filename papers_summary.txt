@@ -1,0 +1,945 @@
+
+
+=== FILE: 2109.13296_TuringBench.pdf ===
+--- Page 1 ---
+TURINGBENCH: A Benchmark Environment for Turing Test
+in the Age of Neural Text Generation
+AdakuUchendu ZeyuMa† ThaiLe RuiZhang DongwonLee
+ThePennsylvaniaStateUniversity,UniversityPark,PA,USA
+{azu5030, thaile, rmz5227, dongwon}@psu.edu
+CarnegieMellonUniversity,Pittsburgh,PA,USA†
+mazeyuwhu@gmail.com†
+Abstract
+PROMPT:SomeinvestigatorsstruggletoreachComey
+Recent progress in generative language HUMAN: Some congressional investigators want to
+models has enabled machines to generate bringformerFBIDirectorJamesComeytotheHilltotell
+themabouthismeetingswithPresidentDonaldTrump
+astonishingly realistic texts. While there are
+buttheycan’tfindhim.
+many legitimate applications of such models,
+GPT-2:SomeinvestigatorsstruggletoreachComeyand
+there is also a rising need to distinguish
+histeambecausetheFBI’sheadquartersisinNorthern
+machine-generated texts from human-written
+Virginia.ButtheFBIhasalotofotherpeoplewhocan
+ones (e.g., fake news detection). However, help.
+to our best knowledge, there is currently no FAIR:Wehaveadutytobevigilant. JamesComey’s
+benchmark environment with datasets and testimonytodayshouldmakehimthinktwiceaboutit.
+tasks to systematically study the so-called TheWhiteHousesaidTrumphadspokenwithComey
+duringthehour-longmeetingandthatalltheseniorU.S.
+“Turing Test” problem for neural text gen-
+officialsweregivena"headsup"onthesituation.
+eration methods. In this work, we present
+GPT-3:“LikeLouisXVI,hedoesn’tseethestormgrow-
+the TURINGBENCH benchmark environment,
+inginthedistance,”saystheDemocraticoperative.The
+whichiscomprisedof(1)adatasetwith200K
+lackofspecifics,evenfromsurrogatesonTrump’sbehalf,
+human- or machine-generated samples across forceswell-knownDemocratstopointouttheobvious.
+20 labels {Human, GPT-1, GPT-2_small,
+GPT-2_medium, GPT-2_large, GPT-2_xl,
+Figure 1: Snippets of PROMPT (a news article title),
+GPT-2_PyTorch, GPT-3, GROVER_base,
+HUMAN vs. three examples of machine-generated
+GROVER_large, GROVER_mega, CTRL,
+texts(GPT-2,FAIRandGPT-3).
+XLM, XLNET_base, XLNET_large,
+FAIR_wmt19, FAIR_wmt20, TRANS-
+FORMER_XL, PPLM_distil, PPLM_gpt2},
+newwavesoftext-generators. Infact,GPT-1was
+(2)twobenchmarktasks–i.e.,TuringTest(TT)
+and Authorship Attribution (AA), and (3) a builtwith117millionparameters,however,inless
+website with leaderboards. Our preliminary than3years,Google’sSwitchTransformer(Fedus
+experimental results using TURINGBENCH etal.,2021)wasthelargestlanguagemodelwith
+show that FAIR_wmt20 and GPT-3 are the 1.6 trillion parameters as of January-June 2021.
+current winners, among all language models
+Currently, the largest language model is Beijing
+tested, in generating the most human-like in-
+AcademyofArtificialIntelligence’s(BAAI)Wu-
+distinguishable texts with the lowest F1 score
+Dao2.0with1.75trillionparameters. Evenmore
+by five state-of-the-art TT detection models.
+alarming, since the birth of GPT-1, the field of
+The TURINGBENCH is available at: https:
+//turingbench.ist.psu.edu/ NLGhasgrownexponentiallysuchthatHugging
+Face’s model repo houses more than 9K English
+1 Introduction
+andnon-Englishlanguagemodels(ofwhichover
+Recently,thefieldofNaturalLanguageGeneration 2Karetext-generators). SeeFigure2forevolution
+(NLG) has seen a massive improvement. While of neural text-generators. Naturally, these newer
+the field of NLG has existed for some time since languagemodelsareabletogeneratetextsthatcan
+even before the onset of the first chatbot ELIZA be easily misconstrued as human-written. Thus,
+(Weizenbaum, 1966), the recent neural architec- duetothesuperiorqualityofrecentgeneratedtexts
+ture Transformers (Vaswani et al., 2017) has led and how easily such text-generators can be used,
+to speedy improvement in the generation of long the potential for misuse is great. This misuse in-
+coherent texts. GPT-1 (Radford et al., 2018) cre- cludesbutisnotlimitedtothespreadofmisinfor-
+ated by OpenAI is the first installment of these mation (Zellers et al., 2019) and political propa-
+1202
+peS
+72
+]LC.sc[
+1v69231.9012:viXra
+--- Page 2 ---
+subtaskswith19human-machinepairs.
+Furthermore,weunderstandthatduetotheubiq-
+uitousnatureoftheseneurallanguagemodels,dis-
+tinguishingmachine-generatedtextsfromhuman-
+writtenonesisnolongersufficient. Itisnowalso
+importantweinquireastowhichparticularneural
+text-generatorauthoredapieceoftext. Tothisend,
+theAuthorshipAttributiontaskaimstoassignau-
+thorship to one of the many text-generators. We
+study20authorsforthistask,however,aswehave
+observed,thiscaneasilybecome2Kauthorsvery
+soon which will grossly exacerbate the difficulty
+Figure 2: Evolution of neural text generators (Y-axis
+of this task. Finally, to host all these tasks and
+depictsmodelparametersinmillionsinlogplot).
+datasets,webuilda TURINGBENCHwebsitewith
+leaderboardsforeachbenchmarktaskandcallfor
+participationintacklingthisveryrelevantandnon-
+ganda(Varoletal.,2017). Therefore,itisurgent
+trivialproblem.
+that we tackle ways to automatically distinguish
+Lastly,wecompareState-of-the-art(SOTA)and
+machine-generatedtextsfromhuman-writtenones
+baseline Turing Test and Authorship Attribution
+accurately.
+models. Fromtheexperimentalresults,weobserve
+To build accurate detectors of machine-
+thatweneedmorecomplexmodelstoaccurately
+generatedtexts,sufficientdataisrequiredbutlack-
+distinguishmachine-generatedtextsfromhuman-
+ing. Therefore, we create a benchmark environ-
+writtenones,includingtext-generatorsthatareyet
+ment, TURINGBENCH,tocombattheobviousse-
+tobecreated.
+curity issue language models could pose. Just in
+linewithbenchmarkenvironmentssuchasSQuAD
+2 RelatedWork
+(Rajpurkar et al., 2016) and GLUE (Wang et al.,
+2018)thattremendouslyfacilitatetheprogressof Neural Text Generation Recent advances in
+NaturalLanguageUnderstanding,webuildthefirst neural network-based language modeling have
+benchmarkforAuthorshipAttributionintheform demonstrated promising results in text genera-
+oftheTuringTestbyincludinghumansandneural tion (Garbacea and Mei, 2020). Current state-of-
+languagemodels. the-artneuraltextgenerationmodelscanproduce
+The TURINGBENCH Environment comprises texts approaching the quality of human-written
+benchmarkdatasets,benchmarktasks,andaweb- ones,especiallyintermsofgrammar,fluency,co-
+sitetohostleaderboards. Thisbenchmarkdataset herency,andusageofrealworldknowledge(Rad-
+iscreatedbycollecting10Knewsarticles(mostly fordetal.,2018,2019;Keskaretal.,2019;Zellers
+inpolitics)writtenbyjournalistsinmediaoutlets etal.,2019;Dengetal.,2019;Brownetal.,2020).
+suchasCNN,WashingtonPost,etc. UsingtheTi- The progress in neural text generation has facili-
+tle of each article, we Prompt 19 selected neural tatedawiderangeofapplications: dialogresponse
+text-generatorstogenerateanarticlesimilartothe generation(Zhangetal.,2020), storytelling(Fan
+human-writtenone. Thiscreates200Karticleswith et al., 2018; See et al., 2019), table-to-text gener-
+20 labels (or authors). Next, we have two bench- ation (Lebret et al., 2016), code comment gener-
+marktasks-TuringTestandAuthorshipAttribution. ation (Alon et al., 2018), medical report genera-
+The Turing Test task is modeled after the Turing tion(Liuetal.,2019a).
+Test concept (Turing, 2009), where if a machine However, as these language models can gener-
+shows intelligent behavior or characteristics usu- atetextindistinguishablefromhuman-writtentext,
+ally attributed to a human, then the machine has theycanalsobemisusedbyadversariestogenerate
+passedthetest. Inthisscenario,thegoalistocause fake news(Shu et al., 2017;Wang, 2017; Zellers
+the machine to fail the Turing Test. Thus, we de- etal.,2019;Mosallanezhadetal.,2020;Shuetal.,
+finethisbenchmarktaskasabinaryclassification 2021),fakeproducereviews(FornaciariandPoe-
+problem with human and machine labels. Given sio,2014;Adelanietal.,2020),spamemails(Das
+19neuraltext-generators,thereare19TuringTest andVerma,2018).
+--- Page 3 ---
+AutomaticDetectionofGeneratedText Given
+thepotentialmaliciousapplicationsoftextgenera-
+tion(Solaimanetal.,2019),itisthusvitaltobuild
+detectorstodistinguishtextgeneratedbymachines
+fromhumans(Gehrmannetal.,2019;Bakhtinetal.,
+2019;Jawaharetal.,2020;Varshneyetal.,2020;
+ÇanoandBojar,2020). Mostcurrentworkfocus
+onfakenewsdetection(Rashkinetal.,2017;Zhou
+etal.,2019;BhatandParthasarathy,2020;Zhong
+et al., 2020; Schuster et al., 2020; Ippolito et al.,
+2020). Despitethisprogress,itremainsachalleng-
+ingtasktobuildgeneralizable,interpretable,and
+robustdetectors(Jawaharetal.,2020).
+Figure3: TheTURINGBENCHEnvironment.
+AuthorshipAttribution AuthorshipAttribution
+(AA)aimstodecidetheauthorofagiventextfrom
+a set of candidates (Houvardas and Stamatatos, CTRL(Keskaretal.,2019),XLM(LampleandCon-
+2006;Stamatatos,2009b;Zhangetal.,2014). AA neau,2019),XLNET (Yangetal.,2019),FAIR(Ng
+hasabroadrangeofapplicationsincludingauthor etal.,2019;Chenetal.,2020),TRANSFORMER-
+profiling (López-Monroy et al., 2020), computer XL(Daietal.,2019),andPPLM (Dathathrietal.,
+forensics(LambersandVeenman,2009),andpla- 2020). Inaddition,someoftheselanguagemodels
+giarism detection (Stamatatos, 2009a). Previous havemultiplepre-trainedmodelsandthus,wewere
+work on AA has explored and combined various abletogeneratetextswith19neuralmachinetext-
+featuresandrepresentationsatdifferentlevelsin- generators. We choose these 10 language model
+cluding n-grams (Escalante et al., 2011; Sapkota architectures because they are currently consid-
+et al., 2015, 2016), POS-tags (Ferracane et al., ered as the SOTA text-generators, many of the
+2017;Halvanietal.,2020)psycholinguisticsfea- text-generatorsonHuggingFace’smodelrepoare
+tures(Lietal.,2014;Uchenduetal.,2019),while variantsoftheselanguagemodels,andboththeir
+recentapproachesalsobuilddeepneuralnetwork pre-trainedmodelsandcodeswerepubliclyavail-
+basedclassifierssuchasfeed-forwardNNLMs(Ge able.
+etal.,2016),CNNs(Hitschleretal.,2017;Shrestha To generate texts, all 19 neural generators re-
+et al., 2017), LSTMs (Jafariakinabad and Hua, quire a short prompt and a specified number of
+2019, 2020), and BERT-based models (Uchendu words to generate texts. Table 1 (and Appendix)
+etal.,2020). describeseachlanguagemodelindetail. Figure4
+However,previousAAworklargelyfocuseson illustratesthedatacreationprocess. Table2sum-
+authorshipattributionamonghumans,whileonlya marizesthestatsofdatasetandthemodelsizes.
+fewpapers(Manjavacasetal.,2017;Uchenduetal.,
+2020; Munir et al., 2021) study neural generated 3.2 TURINGBENCHBenchmarkTasks
+text. Ourworkaimstoprovidethefirstbenchmark
+The Turing Test (TT) Task Our proposed Tur-
+forAuthorshipAttributionintheformoftheTur-
+ing Test task aims to answer the question: Can
+ingTestbyincludinghumansandneurallanguage
+we determine if a piece of text is human-written
+models.
+ormachine-generated? Thistaskisformulatedas
+a binary classification problem with two labels –
+3 The TURINGBENCH Environment
+humanandmachine–modeledaftertheclassical
+Figure3overviewstheframeworkofthe TURING- TuringTestproblem. TheTuringTestexaminesthe
+BENCHEnvironment. abilityofamachinetext-generatortoexhibitintel-
+ligiblebehaviorascribedtohumans. Thegoalisto
+3.1 ChosenLanguageModels
+build a model that causes the machine-generated
+We generated texts using 10 language model texts to fail the Turing Test. Lastly, the TT task
+architectures - GPT-1 (Radford et al., 2018), contains19subtaskswith19human-machinepairs
+GPT-2 (Radford et al., 2019), GPT-3 (Brown (e.g. GPT-2 XL vs. Human, GROVER_base vs.
+et al., 2020), GROVER (Zellers et al., 2019), Human,etc.).
+
+
+=== FILE: 2307.02599_Evade_ChatGPT.pdf ===
+--- Page 1 ---
+Preprint
+EVADE CHATGPT DETECTORS VIA A SINGLE SPACE
+ShuyangCaiandWanyunCui∗
+ShanghaiUniversityofFinanceandEconomics
+shuyangcai@stu.sufe.edu.cn,cui.wanyun@sufe.edu.cn
+ABSTRACT
+ChatGPTbringsrevolutionarysocialvaluebutalsoraisesconcernsaboutthemis-
+use of AI-generated text. Consequently, an important question is how to detect
+whethertextsaregeneratedbyChatGPTorbyhuman. Existingdetectorsarebuilt
+upontheassumptionthattherearedistributionalgapsbetweenhuman-generated
+and AI-generatedtext. These gapsare typicallyidentified usingstatistical infor-
+mation or classifiers. Our research challenges the distributional gap assumption
+in detectors. We find that detectors do not effectively discriminate the semantic
+and stylistic gaps between human-generated and AI-generated text. Instead, the
+“subtledifferences”,suchasanextraspace,becomecrucialfordetection. Based
+on this discovery, we propose the SpaceInfi strategy to evade detection. Experi-
+ments demonstrate the effectiveness of this strategy across multiple benchmarks
+anddetectors. WealsoprovideatheoreticalexplanationforwhySpaceInfiissuc-
+cessful in evading perplexity-based detection. And we empirically show that a
+phenomenoncalledtokenmutationcausestheevasionforlanguagemodel-based
+detectors. Our findings offer new insights and challenges for understanding and
+constructingmoreapplicableChatGPTdetectors.
+1 INTRODUCTION
+InMay2023,newsbrokethatattorneyStevenA.Schwartz,withover30yearsofexperience,em-
+ployedsixcasesgeneratedbyChatGPTinalawsuitagainstanairlinecompany. Remarkably,when
+requestedabouttheiraccuracy,ChatGPTclaimedtheywereentirelytrue. However,thejudgelater
+discovered that all six cases contained bogus quotes and internal citations, resulting in Schwartz
+beingfined5000dollars. ThisalarmingincidentexemplifiesthemisuseofAI-generatedtext.
+The advent of large language models like ChatGPT has undeniably created substantial social
+value (Felten et al., 2023; Zhai, 2022; Sallam, 2023b). Yet, alongside the positive impact, cases
+like Schwartz’s highlight pressing concerns. AI-generated text has been found to be incorrect, of-
+fensive, biased, orevencontainingprivateinformation(Chenetal.,2023;Jietal.,2023;Lietal.,
+2023; Lin et al., 2022; Lukas et al., 2023; Perez et al., 2022; Zhuo et al., 2023; Santurkar et al.,
+2023). Concerns regarding the misuse of ChatGPT span across various domains, such as educa-
+tion(Kasnecietal.,2023), healthcare(Sallam,2023a), academia(Lund&Wang,2023), andeven
+thetrainingoflarge-scalelanguagemodelsthemselves.
+A2019reportbyOpenAI(Solaimanetal.,2019)revealedthathumansstruggletodistinguishAI-
+generatedtextfromhuman-writtentextandarepronetotrustingAI-generatedtext. Consequently,
+relying on automated detection methods is an important effort in differentiating between human-
+generated and AI-generated text (Jawahar et al., 2020), spurring researchers to invest significant
+effortintothisissue.
+These detection methods typically assume the existence of distributional gaps between human-
+generatedandAI-generatedtext,withdetectionachievedbyidentifyingthesegaps. Wedividethe
+detection methods into white-box and black-box detection. White-box detection methods lever-
+age or estimate the intrinsic states of the text to model the distributional gaps, incorporating word
+∗Correspondingauthor.
+1
+3202
+tcO
+31
+]LC.sc[
+2v99520.7032:viXra
+--- Page 2 ---
+Preprint
+distributions(Gehrmannetal.,2019),probabilitycurvatures(Mitchelletal.,2023),andintrinsicdi-
+mensions(Tulchinskiietal.,2023). However,recentAImodelslikeChatGPTareoftenblackboxes
+withinaccessibleandhard-to-estimateinternals,renderingwhite-boxdetectioninapplicable. Thus,
+black-boxdetectorshavealsobeenproposed. Thesedetectorsprimarilylearnthedistributionalgap
+by training binary classifiers with manually collected human corpora and AI-generated text (Guo
+etal.,2023;Solaimanetal.,2019;Tianetal.,2023).
+Ourworkchallengesthetraditionalunderstandingofthedistributionalgaps.Wediscoverthatdetec-
+torsdonotprimarilyrelyonthesegaps,atleastnotonthosevisibletohumansintermsofsemantics
+and styles. First, we find that even when generated text includes the phrase “As an AI model”,
+detectorsmaystillclassifyitashuman-generated. Thissuggeststhatdetectorsdonotproperlyuti-
+lizesemanticinformationfordetection. Second,wefindthatgeneralstyletransferisineffectivein
+evadingdetectors;onlywhenthenewstyleishighlyintensecandetectionpotentiallybeevaded.
+Our experiments reveal that detectors rely on subtle text differences, such as an extra space. To
+demonstrate this, we propose a simple evasion strategy: adding a single space character before a
+randomcommaintheAI-generatedtext.Surprisingly,ourmethodsignificantlyreducesthedetection
+rate for both white-box and black-box detectors. For GPTZero (while-box) and HelloSimpleAI
+(black-box)detectors,theproportionofdetectedAI-generatedtextdropsfromroughly60%-80%to
+nearly0%. TheresultsaredepictedinFig.2.
+Weendeavortoelucidatetheefficacyofthestrategy. Wefoundthestrategyinducesaphenomenon
+termedastokenmutation. Thisphenomenonresultsinthedisappearanceofaprevalenttoken,such
+as a comma, from the tokenized ids, transmuting it into a low-frequency token. The fundamental
+reasonforthisoccurrenceisthediscrepanciesinrepresentations,implyingthatsubtlealterationsin
+textperceptibletohumanscanbesignificantlydivergentforlanguagemodels. Fromthisobserva-
+tion,weextendandproposeaseriesofinfiltrationmethodologies,verifyingtheimpactsofdifferent
+alterations.
+Wesummarizeourmajorcontributionsasfollows:
+• WeinvestigatehowexistingChatGPTdetectorsleveragethedistributionaldifferencesbe-
+tweenAI-generatedandhuman-generatedtextfordetection. Wefindthatdetectorsdonot
+effectivelyexploitsemanticsandstyle-basedcontentdistributions.
+• Weproposeanevasionstrategythatinvolvesinsertingasinglespacecharacter. Thisstrat-
+egy performs well across multiple benchmarks and various types of detectors, revealing
+thatChatGPTdetectorsrelymoreonsubtleformaldiscrepanciesfordetection.
+• We explain why the space insertion strategy is effective. In particular, we provide a phe-
+nomenoncalled“tokenmutation”thatcausestheinfiltration.
+2 RELATED WORK
+Inthissection,wediscusspriorworkrelatedtothedetectionofAI-generatedtext,adversariallearn-
+ing,andstyletransfer.
+DetectionofAI-generatedTextThedetectionofAI-generatedtexthasgarneredsignificantatten-
+tion in recent years (Jawahar et al., 2020), with various methods proposed to distinguish between
+human-generatedandAI-generatedtext. White-boxdetectionmethodsfocusontheinternalstates
+of language models, using features such as word distributions(Gehrmann et al., 2019), probability
+curvatures(Mitchelletal.,2023),andintrinsicdimensions(Tulchinskiietal.,2023). However,these
+methodsarenotapplicabletoblack-boxlanguagemodelslikeChatGPT.Black-boxdetectionmeth-
+ods,whichhavealsobeenexplored,trainbinaryclassifiersusinghumancorporaandAI-generated
+text(Guoetal.,2023;Solaimanetal.,2019;Tianetal.,2023).Ourworkchallengestheassumptions
+ofthesemethods, showingthattraditional distributionalgapsmaynotbetheprimary factorsused
+bydetectors.
+Previous work has already identified initial concerns regarding the robustness of ChatGPT detec-
+tors (Wang et al., 2023). However, the study has been limited to cross-domain and cross-lingual
+generalizationcapabilities. Incontrast, thispaperisthefirsttoprovideacomprehensiveapproach
+toevadingdetectionbythesedetectors.
+2
+--- Page 3 ---
+Preprint
+AdversarialLearningAdversariallearninghasbeenwidelystudiedinthefieldofcomputervision,
+where classifiers can be fooled by making minor modifications to input images (Akhtar & Mian,
+2018; Goodfellow et al., 2014; Szegedy et al., 2014). These modifications, known as adversarial
+perturbations, are often imperceptible to humans but can lead to misclassifications by the model.
+Our work draws parallels between adversarial learning in computer vision and our findings in the
+contextofAI-generatedtextdetection. Wedemonstratethatasimplemodification,suchasaddinga
+spacecharacter,caneffectivelyevadedetectors.
+Adversariallearninghasalsobeenexploredinthecontextofnaturallanguageprocessing(Ebrahimi
+etal.,2018;Jia&Liang,2017). Thesestudiesofteninvolvecraftingadversarialexamplesfortext
+classifiers,withtheaimofimprovingmodelrobustnessorexposingvulnerabilities.
+Style Transfer Style transfer techniques have been employed to transform text content while pre-
+serving its semantic meaning (Fu et al., 2018; Shen et al., 2017; Li et al., 2018). In our study,
+weexaminetheeffectivenessofstyletransferinevadingAI-generatedtextdetectors. Wefindthat
+generalstyletransferisineffectiveforthispurpose, andonlywhenthenewstyleishighlyintense
+candetectionpotentiallybeavoided. Thisresulthighlightsthelimitationsofrelyingsolelyonstyle
+transfertoevadedetectionofAI-generatedtext.
+3 SPACE INFILTRATION
+WeproposeamethodofspacecharacterattacktobypassAItextdetectors. Specifically,wepropose
+toaddaspacecharacterbeforearandomcommainthetext. Forexample,inFig.1,giventheuser
+question “Describe the structure of an atom.”, we first use ChatGPT to generate a response. Such
+responseislikelytobedetectedasAI-generated. Then,withourSpaceInfistrategy,weaddanew
+spacebeforearandomcomma. Iftheresponsecontainsmultipleparagraphs,weapplythisstrategy
+toeachparagraph.Inthiscase,the“charge,”becomes“charge ,”,whichresultsinahighprobability
+tobedetectedashuman-generated.
+Human: Describe the structure of an atom.
+ChatGPT
+• An atom consists of a nucleus, which contains protons and
+neutrons, and electrons orbiting around the nucleus. The protons AI-generated
+haveapositivecharge,theelectronshaveanegativecharge,
+andtheneutronshavenocharge…
+detector
+SpaceInFi
+• An atom consists of a nucleus, which contains protons and
+neutrons, and electrons orbiting around the nucleus. The protons Human-generated
+haveapositivecharge ,theelectronshaveanegativecharge,
+andtheneutronshavenocharge…
+⎵
+Figure1: Toevadedetectors, SpaceInfiaddsaspacecharacterbeforearandomlyselectedcomma
+intheAI-generatedtext. ( indicatesaspacecharacter.)
+In addition to its simplicity, this approach has the following characteristics: (1) free, requiring no
+additional cost; (2) no loss of quality and imperceptibility. The new text has the same generated
+qualityastheoriginaltext. Sincethemodificationonlyinvolvesaddingasinglespace,itisunlikely
+tobenoticedbyahuman. (3)Theattackismodel-agnostic,requiringnoknowledgeoftheinternal
+statesoftheLLMsordetector.Inthispaper,wedenotethisstrategyasSpaceInfi(SpaceInfiltration).
+3
+
+
+=== FILE: 2310.05030_Counter_Turing_Test.pdf ===
+--- Page 1 ---
+Counter Turing Test (CT2): AI-Generated Text Detection is Not as Easy as
+You May Think – Introducing AI Detectability Index
+MeghaChakraborty1 S.MTowhidulIslamTonmoy2 SMMehediZaman2 KrishSharma3
+NiyarRBarman3 ChandanGupta4 ShreyaGautam5 TanayKumar5
+VinijaJain6,7† AmanChadha6,7† AmitP.Sheth1 AmitavaDas1
+1AIInstitute,UniversityofSouthCarolina,USA 2IUT,Bangladesh 3NITSilchar,India
+4IIITDelhi,India 5BITSMesra,India 6StanfordUniversity,USA 7AmazonAI,USA
+Abstract establish a quantifiable spectrum facilitating
+theevaluationandrankingofLLMsaccording
+With the rise of prolific ChatGPT, the risk
+totheirdetectabilitylevels,weproposetheAI
+andconsequencesofAI-generatedtexthasin-
+DetectabilityIndex(ADI). Weconductathor- creasedalarmingly. Thistriggeredaseriesof
+oughexaminationof15contemporaryLLMs,
+events,includinganopenletter(Marcus,2023),
+empirically demonstrating that larger LLMs
+signed by thousands of researchers and tech
+tendtohaveahigherADI,indicatingtheyare
+leadersinMarch2023,demandingasix-month
+lessdetectablecomparedtosmallerLLMs.We
+moratoriumonthetrainingofAIsystemsmore
+firmlybelievethatADIholdssignificantvalue
+sophisticated than GPT-4. To address the in-
+asatoolforthewiderNLPcommunity,with
+evitablequestionofownershipattributionfor
+thepotentialtoserveasarubricinAI-related
+AI-generatedartifacts,theUSCopyrightOffice
+policy-making.
+(Copyright-Office,2023)releasedastatement
+statingthat“Ifawork’straditionalelementsof
+1 ProposedAI-GeneratedTextDetection
+authorship were produced by a machine, the
+Techniques(AGTD)–AReview
+work lacks human authorship and the Office
+willnotregisterit”. Furthermore,boththeUS Recently,sixmethodsandtheircombinationshave
+(White-House,2023)andtheEU(European- been proposed for AGTD: (i) watermarking, (ii)
+Parliament,2023)governmentshaverecently perplexity estimation, (iii) burstiness estimation,
+draftedtheirinitialproposalsregardingthereg-
+(iv)negativelog-likelihoodcurvature,(v)stylomet-
+ulatoryframeworkforAI.Giventhiscynosural
+ricvariation,and(vi)classifier-basedapproaches.
+spotlightongenerativeAI,AI-generatedtext
+Thispaperfocusesoncritiquingtheirrobustness
+detection(AGTD)hasemergedasatopicthat
+hasalreadyreceivedimmediateattentioninre- and presents empirical evidence demonstrating
+search,withsomeinitialmethodshavingbeen theirbrittleness.
+proposed,soonfollowedbyemergenceoftech- Watermarking: WatermarkingAI-generatedtext,
+niquestobypassdetection. Thispaperintro- firstproposedbyWiggers(2022),entailstheincor-
+ducestheCounterTuringTest(CT2),abench-
+porationofanimperceptiblesignaltoestablishthe
+markconsistingoftechniquesaimingtooffer
+authorshipofaspecifictextwithahighdegreeof
+acomprehensiveevaluationoftherobustness
+certainty. Thisapproachisanalogoustoencryption
+ofexistingAGTDtechniques. Ourempirical
+anddecryption. Kirchenbaueretal.(2023a)(w )
+findingsunequivocallyhighlightthefragility v1
+oftheproposedAGTDmethodsunderscrutiny. were the first to present operational watermark-
+Amidsttheextensivedeliberationsonpolicy- ing models for LLMs, but their initial proposal
+making for regulating AI development, it is faced criticism. Sadasivan et al. (2023) shared
+ofutmostimportancetoassessthedetectabil-
+their initial studies suggesting that paraphrasing
+ity of content generated by LLMs. Thus, to
+can efficiently eliminate watermarks. In a subse-
+†WorkdoesnotrelatetopositionatAmazon. quentpaper(Kirchenbaueretal.,2023b)(w
+v2
+),the
+3202
+tcO
+42
+]LC.sc[
+2v03050.0132:viXra
+--- Page 2 ---
+authors put forth evidently more resilient water-
+marking techniques, asserting that paraphrasing
+does not significantly disrupt watermark signals
+in this iteration of their research. By conducting
+extensiveexperiments(detailedinSection3),our
+studyprovidesathoroughinvestigationofthede-
+watermarkingtechniquesw andw ,demonstrat-
+v1 v2
+ingthatthewatermarkedtextsgeneratedbyboth
+methodscanbecircumvented,albeitwithaslight
+decrease in de-watermarking accuracy observed
+withw . Theseresultsfurtherstrengthenourcon-
+v2
+tentionthattextwatermarkingisfragileandlacks
+Figure1: (Top)Thenegativelog-curvaturehypothesispro-
+reliabilityforreal-lifeapplications. posedbyMitchelletal.(2023).Accordingtotheirclaim,any
+Perplexity Estimation: The hypothesis related perturbationsmadetotheAI-generatedtextshouldpredom-
+inantlyfallwithinaregionofnegativecurvature. (Bottom)
+to perplexity-based AGTD methods is that hu-
+Ourexperimentsusing15LLMswith20perturbationsindi-
+mans exhibit significant variation in linguistic
+catethatthetextgeneratedbyGPT3.0andvariantsdonot
+constraints, syntax, vocabulary, and other fac- alignwiththishypothesis.Moreover,fortheotherLLMs,the
+tors (aka perplexity) from one sentence to an- varianceinthenegativelog-curvaturewassominimalthat
+ithadtobedisregardedasareliableindication. and
+other. Incontrast,LLMsdisplayahigherdegree
+representfakeandrealsamplerespectively,whereas and
+of consistency in their linguistic style and struc-
+depictperturbedfakeandrealsample.
+ture. Employingthishypothesis,GPTZero(Tian,
+2023)devisedanAGTDtoolthatpositedtheover- standard deviation of the language spans and m τ
+all perplexity human-generated text should sur- themeanofthelanguagespans. Burstiness(b)is
+passthatofAI-generatedtext,asintheequation: calculatedasb=(στ /m τ −1)andisboundedwithin
+στ /m τ +1
+logp (h )−logp (AI ) ≥ 0 (Appendix C). the interval [-1, 1]. Therefore the hypothesis is
+Θ text Θ text
+Furthermore, GPTZero assumes that the varia- b H −b AI ≥ 0, where b H is the mean burstiness
+tions in perplexity across sentences would also of human writers and b AI is the mean burstiness
+belowerforAI-generatedtext. Thisphenomenon of AI aka a particular LLM. Corpora with anti-
+could potentially be quantified by estimating the bursty,periodicdispersionsofswitchpointstake
+entropyforsentence-wiseperplexity,asdepictedin onburstinessvaluescloserto-1. Incontrast,cor-
+the equation: E =logp [Σn (|sk−sk+1|)]− pora with less predictable patterns of switching
+perp Θ k=1 h h
+logp [Σn (|sk −sk+1|)] ≥ 0; where sk and sk takeonvaluescloserto1. Itisworthnotingthat
+Θ k=1 AI AI h AI
+represent kth sentences of human and AI-written burstinesscouldalsobecalculatedsentence-wise
+textrespectively. and/or text fragment-wise and then their entropy
+Burstiness Estimation: Burstiness refers to the could be defined as: E burst =logp β [Σn k=1 (|sk AIb −
+patternsobservedinwordchoiceandvocabulary sk+1|)−logp [Σn (|sk −sk+1|)]]≥0. Neverthe-
+AIb β k=1 hb hb
+size. GPTZero(Tian,2023)wasthefirsttointro- less,ourcomprehensiveexperimentsinvolving15
+duceburstinessestimationforAGTD.Inthiscon- LLMsindicatethatthishypothesisdoesnotconsis-
+text,thehypothesissuggeststhatAI-generatedtext tentlyprovideadiscerniblesignal. Furthermore,re-
+displaysahigherfrequencyofclustersorburstsof centLLMslikeGPT-3.5/4,MPT(OpenAI,2023a;
+similarwordsorphraseswithinshortersectionsof Team,2023)havedemonstratedtheutilizationof
+thetext. Incontrast,humansexhibitabroadervari- a wide range of vocabulary, challenging the hy-
+ationintheirlexicalchoices,showcasingamore pothesis. Section4discussesourexperimentson
+extensiverangeofvocabulary. Letσ denotethe perplexityandburstinessestimation.
+τ
+--- Page 3 ---
+Negative Log-Curvature (NLC): DetectGPT andisrelativelystraightforward. OpenAIinitially
+(Mitchell et al., 2023) introduced the concept developeditsowntextclassifier(OpenAI,2023b),
+of Negative Log-Curvature (NLC) to detect AI- which reported an accuracy of only 26% on true
+generated text. The hypothesisis that text gener- positives. Duetoitsweakerperformanceamong
+atedbythethemodeltendstolieinthenegative theproposedmethods,wedidnotfurtherinvesti-
+curvatureareasofthemodel’slogprobability,i.e. gatethisstrategy.
+atextgeneratedbyasourceLLM p typicallylies
+θ OUR CONTRIBUTIONS: A Counter Turing Test
+intheareasofnegativecurvatureofthelogprob-
+(CT2)andAIDetectabilityIndex(ADI).
+abilityfunctionof p ,unlikehuman-writtentext.
+θ
+➠
+In other words, we apply small perturbations to IntroducingtheCounterTuringTest(CT2),abench-
+apassagex∼ p ,producingx˜. DefiningPNLC as markconsistingoftechniquesaimingtoofferacom-
+θ θ
+thequantitylogp (x)−logp (x˜),PNLC shouldbe prehensiveevaluationoftherobustnessofprevalent
+θ θ θ AGTDtechniques.
+larger on average for AI-generated samples than
+➠
+EmpiricallyshowingthatthepopularAGTDmethods
+human-writtentext(seeanexampleinTable1and
+arebrittleandrelativelyeasytocircumvent.
+thevisualintuitionofthehypothesisinFig.1). Ex-
+➠
+pressed mathematically: PNLC−PNLC ≥0. It is Introducing AI Detectability Index (ADI) as a mea-
+AI H
+sureforLLMstoinferwhethertheirgenerationsare
+importanttonotethatDetectGPT’sfindingswere
+detectableasAI-generatedornot.
+derivedfromtext-snippetanalysis,butthereispo-
+➠
+Conductingathoroughexaminationof15contempo-
+tential to reevaluate this approach by examining
+raryLLMstoestablishtheaforementionedpoints.
+smallerfragments,suchassentences. Thiswould
+➠
+Bothbenchmarks–CT2andADI–willbepublished
+enable the calculation of averages or entropies,
+asopen-sourceleaderboards.
+akintohowperplexityandburstinessaremeasured.
+➠
+Curateddatasetswillbemadepubliclyavailable.
+Finally,thelimitednumberofperturbationpatterns
+per sentence in (Mitchell et al., 2023) affect the 2 DesignChoicesforCT2 andADIStudy
+reliabilityofresults(cf. Section5fordetails).
+ThissectiondiscussesourselectedLLMsandelab-
+InputType Sentence oratesonourdatagenerationmethods. Morede-
+Original This sentence is generated byanAIor human tailsinAppendixA.
+Perturbed This writing is created byanAIor person
+2.1 LLMs: RationaleandCoverage
+Table1:AnexampleperturbationasproposedinDetectGPT We chose a wide gamut of 15 LLMs that have
+(Mitchelletal.,2023). exhibited exceptional results on a wide range of
+Stylometricvariation: Stylometryisdedicatedto NLPtasks. Theyare: (i)GPT4(OpenAI,2023a);
+analyzingthelinguisticstyleoftextinordertodif- (ii)GPT3.5(Chenetal.,2023);(iii)GPT3(Brown
+ferentiatebetweenvariouswriters. Kumarageetal. et al., 2020); (iv) GPT 2 (Radford et al., 2019);
+(2023)investigatedtheexaminationofstylisticfea- (v) MPT (Team, 2023); (vi) OPT (Zhang et al.,
+turesofAI-generatedtextinordertodistinguishit 2022);(vii)LLaMA(Touvronetal.,2023);(viii)
+fromhuman-writtentext. Theauthorsreportedim- BLOOM(Scaoetal.,2022);(ix)Alpaca(Maeng
+pressiveresultsfortextdetectiongeneratedfrom et al., 2017); (x) Vicuna (Zhu et al., 2023); (xi)
+RoBERTa. However, we observe limitations in Dolly (Wang et al., 2022); (xii) StableLM (Tow
+applyingsuchmethodstoneweradvancedmodels etal.); (xiii)XLNet(Yangetal.,2019); (xiv)T5
+(cf. Section6). (Raffel et al., 2020); (xv) T0 (Sanh et al., 2021).
+Classification-basedapproach: Thisproblemfor- Given that the field is ever-evolving, we admit
+mulation involves training classifiers to differen- thatthisprocesswillneverbecompletebutrather
+tiatebetweenAI-writtenandhuman-writtentext, continue to expand. Hence, we plan to keep the
+
+
+=== FILE: 2310.08240_Who_Said_That.pdf ===
+--- Page 1 ---
+3202
+tcO
+21
+]LC.sc[
+1v04280.0132:viXra
+Preprint
+WHO SAID THAT? BENCHMARKING SOCIAL MEDIA
+AI DETECTION
+WanyunCui, LinqiuZhang, QianleWang, ShuyangCai
+ShanghaiUniversityofFinanceandEconomics
+cui.wanyun@sufe.edu.cn
+zhang.linqiu@stu.sufe.edu.cn
+wql20000111@stu.sufe.edu.cn
+shuyangcai@stu.sufe.edu.cn
+ABSTRACT
+AI-generatedtexthasproliferatedacross variousonlineplatforms, offeringboth
+transformative prospects and posing significant risks related to misinformation
+and manipulation. Addressing these challenges, this paper introduces SAID1
+(SocialmediaAIDetection),anovelbenchmarkdevelopedtoassessAI-textde-
+tection models’ capabilities in real social media platforms. It incorporates real
+AI-generatetextfrompopularsocialmediaplatformslikeZhihuandQuora. Un-
+likeexistingbenchmarks,SAIDdealswithcontentthatreflectsthesophisticated
+strategiesemployedby realAI users on the Internetwhich may evade detection
+orgainvisibility,providingamorerealisticandchallengingevaluationlandscape.
+Anotablefindingofourstudy,basedontheZhihudataset,revealsthatannotators
+candistinguishbetweenAI-generatedandhuman-generatedtextswithanaverage
+accuracyrateof96.5%. Thisfindingnecessitatesare-evaluationofhumancapa-
+bility in recognizingAI-generatedtext in today’s widely AI-influencedenviron-
+ment.Furthermore,wepresentanewuser-orientedAI-textdetectionchallengefo-
+cusingonthepracticalityandeffectivenessofidentifyingAI-generatedtextbased
+onuserinformationandmultipleresponses.Theexperimentalresultsdemonstrate
+thatconductingdetectiontasksonactualsocialmediaplatformsprovestobemore
+challengingcomparedtotraditionalsimulatedAI-textdetection,resultinginade-
+creased accuracy. On the other hand, user-oriented AI-generated text detection
+significantlyimprovetheaccuracyofdetection.
+1 INTRODUCTION
+TheadventofAI-generatedtexthashada profoundimpactonnumeroussectors, includingsocial
+media platforms. On one side, AI-generated responses enable automation, personalization, and
+scalingofcontentcreation,therebyrevolutionizinghowinformationisdisseminatedandconsumed.
+However, this promising technology has a darker aspect, where it is exploited for disseminating
+misinformation,impersonatingrealusers,orcreatingcontentthatcandeceiveormanipulatepublic
+opinion Jietal. (2023); Chenetal. (2023); Lietal. (2023); Linetal. (2022); Lukasetal. (2023);
+Perezetal.(2022);Zhuoetal.(2023);Santurkaretal.(2023).
+Addressingthe abuseandmalicioususe ofAI hasled to significantresearcheffortsin thefield of
+AI-generatedtextdetection. A rangeof approacheshavebeenexplored,includingbutnotlimited
+to machinelearningalgorithmsGuoetal. (2023);Solaimanetal.(2019), text-basedfeaturesanal-
+ysis Mitchelletal. (2023); Tulchinskiietal. (2023); Mitchelletal. (2023), and positive unlabeled
+techniques Tianetal. (2023). These endeavours aim to automatically discern machine-generated
+textfromhuman-generatedcontent,therebymitigatingtherisksassociatedwithitsabuse.
+One of the most significant shortcomingsof the existing research landscape is the lack of bench-
+marksthataccuratelyrepresentthe complexityandvarietyof AI-generatedtextin real-worldsce-
+narios.Manyoftheexistingbenchmarksemployartificial,controlledenvironments,suchasdirectly
+1https://github.com/SLAM-group/SAID
+1
+--- Page 2 ---
+Preprint
+Table1: StatisticsofhumanandAI-generatedresponsesinSAID.
+SAID-Quora SAID-Zhihu
+Human AI Human AI
+Users 491 464 6769 4565
+Responses 14648 22892 72567 108654
+querying LLMs for generating AI content Mitchelletal. (2023); Guoetal. (2023); Krishnaetal.
+(2023). Whilesuchsettingsmaybeusefulforpreliminaryevaluation,theyoftenfailtocapturethe
+nuancedtacticsthataredeployedinthewildtoevadedetectionormaximizeexposure.Forexample,
+AI-generatedtextpostedonsocialmediamaybecraftedusingacombinationofstrategiesliketext
+modificationCai&Cui (2023) or paraphrasingKrishnaetal. (2023), therebymakingit harderfor
+traditionaldetectionmethodstoidentifythem.
+On the other hand, existing datasets for AI-generated text on realistic scenarios were assembled
+before2022,theextensivedeploymentofLLM(e.g. TweepFake-2021Fagnietal.(2021), XSum-
+2018Narayanetal.(2018),KaggleFakeNews-2018Lifferth(2018)). Therelevanceandefficacyof
+thesedatasetsarenowquestionableforevaluatingdetectioncapabilitiesagainstcontemporary,more
+advancedLLM-generatedtext.
+Inlightoftheselimitations,weintroduceSAID(SocialmediaAIDetection)—anovelbenchmark
+aimedataddressingthe gapsinexistingAI-generatedtextdetectionbenchmarks. SAID isunique
+in its approach of crawling real AI-generated data from popular social media platforms, such as
+Zhihu.comand Quora.com,to providea more accurate and challengingassessment of the current
+detection models. We aim to advance the field of AI-generatedtext detection by offeringa more
+realistictestingground.
+Onesignificantchallengeincollectingrealmachine-generatedtextisdeterminingthegroundtruthof
+whetherapieceoftextisAI-generated. Fortunately,wefoundthatZhihuitselfprovidesautomated
+detectionlabelsforAIresponses,servingasafoundationforourAIlabeling. Initially,weconsider
+responseswiththislabelasAI-generated.Subsequently,weextendthislabeltoauserlevel. Inthis
+paper,ourmajorassumptionisthatuserswithAI-generatedresponsesarelikelytobeanAI,and
+thereforetheirotherresponsesarealsoAI-generated.
+A prevailing notion previously posited by OpenAI suggests that humans are incapable of distin-
+guishingbetweenAI-generatedandhuman-generatedtextsSolaimanetal. (2019). However,from
+the SAID-Zhihu,one of the vital conclusionsof this paperis thatannotators, adept with LLMs
+andsocialmedia,canaccuratelydistinguishwhetheraresponseisAI-generated,achievingan
+average recognitionaccuracyrate of up to 96.5%. We do not perceivethis conclusionas entirely
+contradictory to the findings of Solaimanetal. (2019), but rather reflective of a shift in context.
+In2019, whentheconclusionof OpenAIwas drawn,AI-generatedtextwasin its infancyandnot
+widelyapplied.HumanshadalimitedunderstandingofAI-generatedtextatthistime,thus,smooth
+andcoherenttextontheinternetwasgenerallybelievedtobehuman-generated.However,by2023,
+whenourexperimentswereconducted,AI-generatedtexthadmaturedandyieldedsocietalbenefits.
+Hence, individualsfamiliarwith AI-generatedtext, havingencounteredampleexamples, havede-
+velopedthecapabilitytodistinguishitfromhuman-generatedcontent.Consequently,wearguethat
+in today’sera, where AI-generatedcontentwidely impactsindividuals, it is crucialto re-establish
+theunderstandingofhumans’abilitytorecognizeAI-generatedtext.
+Armedwith thisnewinsight, weproceededto labelAI-generatedandhuman-generatedresponses
+on Quora. To enhance the efficiency of extracting AI-generated text, we collected AI-generated
+responsesfromthecollapsedanswers. StatisticsofSAIDarepresentedinTable1.
+We then evaluated the performance of current AI-generated text detectors, which are mostly de-
+veloped based on simulated data.The results indicate that, when tested on the real SAID dataset,
+theperformanceofdetectorsexperiencedanoticeabledeclinecomparedtoprevioussimulateddata,
+such asHC3 Guoetal. (2023). Consequently,SAID presentsnewchallengesfordevelopinggen-
+uinelypracticalAI-generatedtextgenerators,emphasizingthenecessityofimprovingthereliability
+androbustnessofdetectionmethodsinreal-worldapplications.
+2
+--- Page 3 ---
+Preprint
+Moreover,weintroduceanovelandpracticalchallenge: user-orientedAI-generatedtextdetection,
+identifyingwhethera responseis AI-generatedor human-generatedbasednotonlyon its content,
+butalsoonitsuserinformationliketheuser’sotherresponses.Thistaskprovestobemorepractical
+and effective for AI-generated text detection. As AI users tend to post voluminous AI-generated
+text,theotheranswersfromtheuserprovideabundantvaluableinformationforthedetection,thus
+significantlyenhancingthedetectionaccuracy.Experimentalresultssubstantiateourassertion.
+Insummary,themaincontributionsofourworkareasfollows:
+1. NovelBenchmark for AI-generatedtextDetection: We introduceSAID, a benchmark
+offeringreal-worldAI-generatedtextfromsocialmediaplatforms,ZhihuandQuora. This
+addressestheshortcomingsofexistingbenchmarksbyprovidingmorerealisticanddiver-
+sifiedAIdetection.
+2. Insightful Findingson HumanDiscernment: Our workunveilsthe noteworthyfinding
+that, contrarytopriorassumptions, individualsfamiliar withLLMsand socialmediacan
+accurately distinguish between AI-generated and human-generated responses, achieving
+animpressive96.5%averageaccuracy.Thispromptsare-examinationofhumancognition
+capabilitiesinAI-generatedtextdetectioninthemodernAI-infusedenvironment.
+3. User-Oriented AI-Generated Text Detection Challenge: We propose and illustrate a
+noveluser-orientedAI-generatedtextdetectionchallenge.Thisemphasizestheimportance
+and effectiveness of leveraging user information and content analysis for more practical
+androbustAIdetection.Wedemonstrateitseffectthroughexperimentalvalidation.
+4. Empirical Evaluation of Current AI Detectors: By deploying contemporary AI-
+generatedtextdetectorsonSAID,we presentadetailedempiricalevaluation,uncovering
+theircapabilitiesandlimitationsinreal-worldscenarios. Wefoundclearperformancede-
+clineinSAID.ThisoffersnovelinsightsanddirectionsforenhancingthereliabilityofAI
+detectionmethods.
+2 RELATED WORK
+TheburgeoningfieldofAI-generatedtextdetectionhaswitnessednumerouscontributions,explor-
+ingdiversedetectionstrategiesandmethodologies. Here,weelaborateonthepertinentworksand
+the evolution of AI-generated content detection, illustrating the context in which our research is
+positioned.
+AI-Generated Text Detection Approaches Various studies have introduced innovative solutions
+to tackle the challengesposedby AI-generatedtext, usingmachine learningalgorithmsGuoetal.
+(2023); Solaimanetal. (2019). These approaches extensively analyze textual features to differ-
+entiate between human and AI-generated content Mitchelletal. (2023); Tulchinskiietal. (2023).
+Guoetal.(2023)andSolaimanetal.(2019)haveplayedapivotalroleinshapingtheearlydevelop-
+mentofdetectionalgorithms,leveragingclassicalmachinelearningmodelstodiscernthenuancesin
+AI-generatedtextstructures. AsexploredbyTianetal.(2023),positiveunlabeledtechniqueshave
+surfaced as promising avenues for enhancing detection accuracies. These techniques effectively
+dealwiththescarcityoflabeledAI-generatedtextinstancesinreal-worldscenariosbyutilizingthe
+availablepositiveandunlabeledsamplestotrainrobustmodels.
+FeatureAnalysisThefocusontext-basedfeatureanalysisisevidentintheworksofMitchelletal.
+(2023) and Tulchinskiietal. (2023). These studies delved into the inherent features and patterns
+of textsto deviseeffectivedetectionmechanisms, exploitingthe subtle discrepanciesbetweenhu-
+man and machine writings. The intrinsic analysis of texthas provenvital in unveilingthe hidden
+characteristicsandintricaciesofAI-generatedcontent.
+EvasionTacticsandParaphrasingTheincreasingsophisticationinevasiontacticsishighlighted
+in studies such as Cai&Cui (2023); Sadasivanetal. (2023); Krishnaetal. (2023). These works
+emphasize the escalating challenges posed by advanced text modification and paraphrasing tech-
+niques, which mask the identifiable traits of AI-generated text, necessitating the development of
+moreresilientdetectionmethodologies.
+Benchmark Datasets Existing benchmarks have largely been constrained by artificial and con-
+trolled environments,limiting the representativescope of AI-generatedcontentin real-worldcon-
+3
+
+
+=== FILE: 2405.07940_RAID_Benchmark.pdf ===
+--- Page 1 ---
+RAID: A Shared Benchmark for Robust Evaluation
+of Machine-Generated Text Detectors
+LiamDugan1, AlyssaHwang1, FilipTrhlik2, JoshMagnusLudan1
+AndrewZhu1, HainiuXu3, DaphneIppolito4, ChrisCallison-Burch1
+UniversityofPennsylvania1 UniversityCollegeLondon2
+King’sCollegeLondon3 CarnegieMellonUniversity4
+{ldugan, ahwang16, jludan, andrz, ccb}@seas.upenn.edu
+hainiu.xu@kcl.ac.uk, filip.trhlik.21@ucl.ac.uk, daphnei@cmu.edu
+Abstract
+https://www.detect-ai.com
+Many commercial and open-source models LLaMA DETECT AI:
+claim to detect machine-generated text with (default)
+AI-GENERATED
+extremelyhighaccuracy(99%ormore). How-
+ever, very few of these detectors are evalu-
+ated on shared benchmark datasets and even
+whentheyare,thedatasetsusedforevaluation LLaMA https://www.detect-ai.com
+are insufficiently challenging—lacking varia-
++sampling DETECT AI:
+tionsinsamplingstrategy,adversarialattacks,
+and open-source generative models. In this +penalty NOT AI-GENERATED
+work we present RAID: the largest and most
+challenging benchmark dataset for machine-
+Figure1:Detectorsformachine-generatedtextareoften
+generatedtextdetection. RAIDincludesover
+highly performant on default model settings but fail
+6 million generations spanning 11 models, 8
+todetectmoreunusualsettingssuchasusingrandom
+domains,11adversarialattacksand4decoding
+samplingwitharepetitionpenalty.
+strategies. UsingRAID,weevaluatetheout-of-
+domainandadversarialrobustnessof8open-
+and4closed-sourcedetectorsandfindthatcur-
+theirownevaluationdatasetsandfailtotesttheir
+rentdetectorsareeasilyfooledbyadversarial
+attacks,variationsinsamplingstrategies,repe- modelsonsharedresources—makingitdifficultto
+titionpenalties,andunseengenerativemodels. verifyclaimsofaccuracyandrobustness. Thishas
+Wereleaseourdata1alongwithaleaderboard2 led to an erosion of trust in the efficacy of auto-
+toencouragefutureresearch. maticdetectionmethodsandagenerallyfatalistic
+1 Introduction sentimenttowardsdetectionamongresearchersand
+practitioners(Sadasivanetal.,2023).
+LargeLanguageModels(LLMs)havebeenableto
+To combat this trend, in this work, we intro-
+foolhumansintothinkingtheiroutputsarehuman-
+ducetheRobustAIDetection(RAID)benchmark.
+writtenforroughlyfouryears(Duganetal.,2020;
+RAID is the largest and most challenging bench-
+Clark et al., 2021). In that short span of time we
+mark of generated text ever released, consisting
+haveseenLLM-generatedtextbeusedfortargeted
+of6M+generationsspanning11generators,8do-
+phishingattacks(Bakietal.,2017;Hazell,2023),
+mains,11adversarialattacks,and4decodingstrate-
+massspamandharassment(Weiss,2019),disinfor-
+gies. UsingRAID,webenchmark12detectors(8
+mationcampaigns(Sharevskietal.,2023;Spitale
+open-and4closed-source). Wefindthatdetectors
+et al., 2023), and spurious scientific publication
+havedifficultygeneralizingtounseenmodelsand
+(Lundetal.,2023). Inordertodocumentandeven-
+domainsandthatsimplechangessuchaschanging
+tuallymitigatesuchharms,wemustdeveloprobust
+thesamplingstrategy,addingarepetitionpenalty,
+automaticdetectorsofmachine-generatedtext.
+and adversarially modifying text lead to marked
+Manyexcitingandinventivemethodshavebeen
+decreasesinperformance.
+proposed in recent years for detecting generated
+text (Crothers et al., 2023). However, when eval-
+2 RelatedWork
+uating these methods, authors typically generate
+1https://github.com/liamdugan/raid InTable1weshowacomparisonbetweenRAID
+2https://raid-bench.xyz/leaderboard andotherpubliclyavailablesourcesofgenerated
+4202
+nuJ
+01
+]LC.sc[
+2v04970.5042:viXra
+--- Page 2 ---
+Domain Model Sampling Multilingual Adversarial
+Name Size coverage? coverage? coverage? coverage? coverage?
+TuringBench(Uchenduetal.,2021) 200k
+RuATD(Shamardinaetal.,2022) 215k
+HC3(Guoetal.,2023) 26.9k
+MGTBench(Heetal.,2023) 2817
+MULTITuDE(Mackoetal.,2023) 74.1k
+AuText2023(Sarvazyanetal.,2023b) 160k
+M4(Wangetal.,2023b) 122k
+CCD(Wangetal.,2023a) 467k
+IMDGSP(Moscaetal.,2023) 29k
+HC-Var(Xuetal.,2023) 145k
+HC3Plus(Suetal.,2024) 210k
+MAGE(Lietal.,2024) 447k
+RAID(Ours) 6.2M
+Table1: Acomparisonofthepubliclyavailablesourcesofgeneratedtext. Ourprovideddatasetistheonlyonethat
+containsadiverseselectionofdomains,samplingstrategies,andadversarialattacksacrossrecentgenerativemodels.
+text. Amongthese,themostsimilarworktoours moglyphattacks(Gagianoetal.,2021;Wolff,2020;
+is Li et al. (2024), who create a dataset of 447k Mackoetal.,2024),whitespaceinsertion(Caiand
+generationsfrom7languagemodelfamiliesacross Cui,2023),sentimentandfactualalterations(Bhat
+10 domains to study detector robustness. Other andParthasarathy,2020),paraphraseattacks(Kr-
+resources typically focus on particular sub-areas ishnaetal.,2023;Sadasivanetal.,2023),andsyn-
+suchasmultilingualtext(Mackoetal.,2023;Wang onymreplacement(Kulkarnietal.,2023;Puetal.,
+etal.,2023b),code(Wangetal.,2023a),question- 2023a). Our work builds on this foundation and
+answering (Guo et al., 2023; Xu et al., 2023; Su synthesizesmanyelementsoftherobustnesslitera-
+et al., 2024), and scientific papers (Mosca et al., tureintoonesingularsystematicbenchmarkstudy.
+2023). Additionally,sharedtaskssuchasAuText-
+3 DatasetCreation
+Tification (Sarvazyan et al., 2023b) and RuATD
+(Shamardina et al., 2022) have provided datasets
+3.1 Overview
+and encouraged centralized evaluation and com-
+In Figure 2, we illustrate the components of the
+petition. Whilemanysharedresourcesdowellat
+RAID dataset. To create RAID, we first sample
+coveringmultiplegenerativemodelsanddomains,
+roughly 2,000 documents of human-written text
+few include adversarial attacks and none include
+fromeachofour8targetdomains(§3.2). Foreach
+variation in decoding strategy—frequently even
+document, we create a corresponding generation
+failingtolistthestrategyused. Thesedatasetsare
+prompt using a template such as “Write a recipe
+insufficientlychallengingandpromotetheinflated
+for{title}”(§3.3). Wethengenerateoneoutputfor
+reportsofdetectoraccuracy.
+eachofour11models(§3.4),4decodingstrategies
+Anotherwaytoevaluaterobustnessisthrougha
+(§3.5),and11adversarialattacks(§3.6). TheRAID
+small-scalecomparativestudy. Inthesestudies,one
+datasetconsistsofover6Mgenerations,thelargest
+aspectofthegeneratedtextisvariedanddetector
+datasetofgeneratedtexttodate.
+accuracyiscomparedacrossthevariations. Such
+studieshaveshownthatdetectorslackrobustness 3.2 Domains
+tounseengenerativemodels(StiffandJohansson,
+Since different domains have been shown to in-
+2022; Puet al.,2023b; Chakrabortyet al.,2023),
+duce LLMs to make diverse errors (Dugan et al.,
+domains(Pagnonietal.,2022;Puetal.,2023a;Ro-
+2023), we prioritized domains that were both at
+driguezetal.,2022),decodingstrategies(Ippolito
+high risk for abuse and were diverse and chal-
+etal.,2020;Solaimanetal.,2019),prompts(Koike
+lenging. Our sources require factual knowledge
+etal.,2023;Kumarageetal.,2023;Luetal.,2023),
+(News, Wikipedia), generalization and reasoning
+repetition penalties (Fishchuk and Braun, 2023),
+(Abstracts, Recipes), creative and conversational
+andhumanedits(Gaoetal.,2024).
+skills(Reddit,Poetry),andknowledgeofspecific
+Similarworkspecializinginadversarialrobust- media(Books,Reviews). Toavoidcontamination,
+nesshasshownthatdetectorsarevulnerabletoho- most of our human-written documents are taken
+--- Page 3 ---
+Models Domains Decoding Strategy
+GPT-4 GPT-2 XL GPT-3 Abstracts Recipes Greedy (temp. = 0)
+Cohere Cohere (Chat) Sampling (temp. = 1, p = 1)
+Books Reddit
+MPT-30B MPT-30B (Chat)
+News Reviews Repetition Penalty
+Mistral-7B Mistral-7B (Chat)
+ChatGPT LLaMA 2 70B (Chat) Poetry Wikipedia With (rep = 1.2)
+Without (rep = 1.0)
+11 models 8 domains
+Detectors Adversarial Attacks
+Neural Metric-Based Commercial Alternative Spelling Homoglyph
+RoBERTa-B (GPT-2) GLTR GPTZero Article Deletion Number Swap
+RoBERTa-L (GPT-2) Fast DetectGPT Originality Insert Paragraphs Paraphrase
+RoBERTa-B (ChatGPT) Binoculars Winston Upper Lower Swap Synonym Swap
+RADAR LLMDet ZeroGPT Zero-Width Space Misspelling
+Whitespace Addition
+12 detectors 11 attacks
+Figure2: AnoverviewofthestructureoftheRAIDdataset. Wegenerate2,000continuationsforeverycombination
+ofdomain,model,decoding,penalty,andadversarialattack. Thisresultsinroughly6.2milliongenerationsfor
+testing. Wethenevaluateeachdetectoronallpiecesofgeneratedtextinthedataset.
+frompubliclyavailablepre-2022datasets(seeAp- Chat Writetheabstractfortheacademicpaper
+pendixE.1). titled"{title}".
+Non-Chat Thefollowingisthefulltextoftheabstract
+3.3 Prompts for a research paper titled "{title}" from
+arxiv.org:
+We prompt our generators in a zero-shot fashion
+using “Chat” templates for models fine-tuned on Table 2: The “Chat” and “Non-Chat” templates used
+dialogueand“Non-Chat”templatesforcontinua- for generation in the Abstracts domain. The “{title}”
+fieldisdynamicallyfilledinwiththetitleofthehuman-
+tionmodels. Eachpromptisnearlythesame,with
+writtendocumentatgenerationtime.
+the exception of a “{title}” field that is dynami-
+cally replaced with the title of the corresponding
+human-written text (see Table 2). Unlike previ- tral7B,MPT30B,LLaMA270B),andtheCohere
+ous work (Verma et al., 2023; Xu et al., 2023), command andchatmodel(seeAppendixE.2).
+weintentionallyavoidbiasingthelanguagemodel
+towards a particular length or generation style to 3.5 DecodingStrategies
+better match our expectations of real-world sce- Thedecodingstrategydetermineshowtokensare
+narios. Weengineeredourpromptsovermultiple selectedfromthelanguagemodel’sprobabilitydis-
+roundstominimizedegeneraterepetition,unhelp- tribution. Previous work has shown that greedy
+ful generation, and meta-commentary across all decoding (i.e. selecting the most likely token at
+models(seeAppendixE.3). each time step) reduces the diversity of text and
+makes it easier to detect while sampling directly
+3.4 Models
+fromthelanguagemodeloutputdistributionshows
+We carefully chose a set of models that were theoppositeeffect(Ippolitoetal.,2020). Basedon
+maximally distinct from each other, offering us thesefindings,wegeneratetwooutputsperprompt,
+thewidestrangeandvariabilityofgeneratedtext. onewithgreedydecodingandtheotherwithfully
+We focused on varying model sizes, open/closed randomsampling.
+source,andchat/completionstyle. Followingwork We also generate two additional outputs with
+bySarvazyanetal.(2023a),weselectlargestmodel Keskaretal.(2019)’srepetitionpenaltywhenavail-
+from each model family and exclude third-party able. This penalty works by down-weighting the
+fine-tunedvariantsofbasemodelsinfavorofthe probabilityoftokensthathavepreviouslyappeared
+basemodelsthemselves. Intotal,weusedfourGPT inthecontextwindowbysomemultiplicativefac-
+models (GPT2, GPT3, GPT4, ChatGPT), three tor θ, resulting in less repetitive output. We are
+open-source models and their chat variants (Mis- thefirsttoevaluatethispenaltyfordetectionata

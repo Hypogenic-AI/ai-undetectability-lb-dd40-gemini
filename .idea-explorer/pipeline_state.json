@@ -1,0 +1,34 @@
+{
+  "created_at": "2026-01-17T22:04:26.040695",
+  "stages": {
+    "resource_finder": {
+      "status": "completed",
+      "started_at": "2026-01-17T22:04:26.041092",
+      "completed_at": "2026-01-17T22:38:08.755097",
+      "success": true,
+      "outputs": {
+        "literature_review": "/data/hypogenicai/workspaces/ai-undetectability-lb-dd40-gemini/literature_review.md",
+        "resources_catalog": "/data/hypogenicai/workspaces/ai-undetectability-lb-dd40-gemini/resources.md",
+        "papers_dir": "/data/hypogenicai/workspaces/ai-undetectability-lb-dd40-gemini/papers",
+        "datasets_dir": "/data/hypogenicai/workspaces/ai-undetectability-lb-dd40-gemini/datasets",
+        "code_dir": "/data/hypogenicai/workspaces/ai-undetectability-lb-dd40-gemini/code"
+      }
+    },
+    "experiment_runner": {
+      "status": "completed",
+      "started_at": "2026-01-17T22:38:08.755423",
+      "completed_at": "2026-01-17T23:49:06.203679",
+      "success": true,
+      "outputs": {
+        "success": true,
+        "return_code": 0,
+        "elapsed_time": 4257.435877084732,
+        "log_file": "/data/hypogenicai/workspaces/ai-undetectability-lb-dd40-gemini/logs/execution_gemini.log",
+        "transcript_file": "/data/hypogenicai/workspaces/ai-undetectability-lb-dd40-gemini/logs/execution_gemini_transcript.jsonl"
+      }
+    }
+  },
+  "current_stage": null,
+  "completed": true,
+  "completed_at": "2026-01-17T23:49:06.204471"
+}

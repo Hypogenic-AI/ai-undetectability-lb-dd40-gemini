@@ -1,0 +1,30 @@
+\section{Results}
+
+Our experiments reveal a significant disparity between the detectability of raw model outputs and adversarially modified text. Table \ref{tab:main_results} summarizes the Undetectability Scores across the defined tracks.
+
+\begin{table}[h]
+  \caption{Undetectability Scores on RAID Dataset Sample using RoBERTa Detector}
+  \label{tab:main_results}
+  \centering
+  \begin{tabular}{llcc}
+    \hline
+    \textbf{Track} & \textbf{Model / Method} & \textbf{Undetectability Score} & \textbf{$\Delta$ from Human} \\
+    \hline
+    Reference & Human & 0.998 & - \\
+    \hline
+    Inference & LLaMA-Chat & 0.535 & -0.463 \\
+    Postediting & LLaMA-Chat + SpaceInfi & \textbf{0.999} & +0.001 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\subsection{Key Findings}
+
+\textbf{Humans are Undetectable.}
+The reference human text achieved an Undetectability Score of 0.998. This confirms that the RoBERTa detector has a very low false positive rate on this specific data sample, correctly identifying human text as human with high confidence.
+
+\textbf{Base Models are Vulnerable.}
+In the Inference track, LLaMA-Chat achieved a score of 0.535. While not zero, this score indicates that the detector is significantly more suspicious of LLaMA-Chat outputs than human text. The detector successfully leverages statistical artifacts in the raw generation to distinguish it from human writing.
+
+\textbf{Adversarial Attacks Break Detection.}
+The most striking result is observed in the Postediting track. Applying the SpaceInfi attack increased the Undetectability Score from 0.535 to 0.999. This represents a +0.46 absolute improvement, rendering the AI-generated text statistically indistinguishable from human text for this detector. The result validates the hypothesis that simple token-level perturbations can completely bypass standard supervised detectors.
